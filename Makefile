@@ -13,10 +13,10 @@ help: ## Display this help
 		| sort \
 		| awk 'BEGIN { FS = ":.*?## " }; { printf "\033[36m%-30s\033[0m %s\n", $$1, $$2 }'
 
-start-dev-env: ## start dev env
+start-redis: ## start dev env
 	@docker-compose -f .docker/dev/docker-compose.yml up -d
 
-stop-dev-env: ## stop dev env
+stop-redis: ## stop dev env
 	@docker-compose -f .docker/dev/docker-compose.yml down
 
 post: ## post [DATA].json file
@@ -25,6 +25,9 @@ post: ## post [DATA].json file
 patch: ## patch [ID] with [DATA].json file
 	@curl -X PATCH -H "Content-Type: application/json" -d @./tmp/patch/${DATA}.json http://127.0.0.1:8080/${DATA}/${ID}
 
-get: ## get [DATA]
+get-all: ## get [DATA]
 	@curl -X GET http://127.0.0.1:8080/${DATA}
+
+get: ## get [DATA] [ID]
+	@curl -X GET http://127.0.0.1:8080/${DATA}/${ID}
 
