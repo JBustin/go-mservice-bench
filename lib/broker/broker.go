@@ -14,7 +14,7 @@ var ctx = context.Background()
 
 type Queue struct {
 	name   string
-	client *redis.Client
+	Client *redis.Client
 }
 
 func NewQueue(name string, client *redis.Client) Queue {
@@ -22,21 +22,21 @@ func NewQueue(name string, client *redis.Client) Queue {
 }
 
 func (q Queue) Flush() error {
-	_, err := q.client.Del(ctx, q.name).Result()
+	_, err := q.Client.Del(ctx, q.name).Result()
 	return err
 }
 
 func (q Queue) Push(data string) error {
-	_, err := q.client.RPush(ctx, q.name, data).Result()
+	_, err := q.Client.RPush(ctx, q.name, data).Result()
 	return err
 }
 
 func (q Queue) Pop() (string, error) {
-	return q.client.LPop(ctx, q.name).Result()
+	return q.Client.LPop(ctx, q.name).Result()
 }
 
 func (q Queue) IsEmpty() (bool, error) {
-	length, err := q.client.LLen(ctx, q.name).Result()
+	length, err := q.Client.LLen(ctx, q.name).Result()
 	return length == 0, err
 }
 
