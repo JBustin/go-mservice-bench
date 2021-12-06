@@ -14,10 +14,10 @@ help: ## Display this help
 		| awk 'BEGIN { FS = ":.*?## " }; { printf "\033[36m%-30s\033[0m %s\n", $$1, $$2 }'
 
 start-redis: ## start dev env
-	@docker-compose -f .docker/dev/docker-compose.yml up -d
+	@docker-compose -f .docker/docker-compose.yml up -d
 
 stop-redis: ## stop dev env
-	@docker-compose -f .docker/dev/docker-compose.yml down
+	@docker-compose -f .docker/docker-compose.yml down
 
 post: ## post [DATA].json file
 	@curl -X POST -H "Content-Type: application/json" -d @./tmp/post/${DATA}.json http://127.0.0.1:8080/${DATA}
