@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/go-mservice-bench/lib/logger"
 	"github.com/go-redis/redis/v8"
 )
 
@@ -46,16 +47,16 @@ type Worker struct {
 	action  func(data string) error
 	play    bool
 	delayMs int
-	client  *redis.Client
+	logger  logger.Logger
 }
 
-func NewWorker(q Queue, delayMs int, client *redis.Client, action func(data string) error) Worker {
+func NewWorker(q Queue, delayMs int, logger logger.Logger, action func(data string) error) Worker {
 	return Worker{
 		q:       q,
-		qFail:   NewQueue(fmt.Sprintf("%v%v", q.name, ":fail"), client),
+		qFail:   NewQueue(fmt.Sprintf("%v%v", q.name, ":fail"), q.Client),
 		delayMs: delayMs,
 		action:  action,
-		client:  client,
+		logger:  logger,
 		play:    false,
 	}
 }
@@ -73,12 +74,12 @@ func (w *Worker) Start() {
 			default:
 				data, err := w.q.Pop()
 				if err != nil && err != redis.Nil {
-					fmt.Println(err)
+					w.logger.Error(fmt.Sprintf("%v", err))
 				}
 				if data != "" {
 					err = w.action(data)
 					if err != nil {
-						fmt.Println(err)
+						w.logger.Error(fmt.Sprintf("%v", err))
 					}
 				}
 			}

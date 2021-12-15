@@ -4,13 +4,14 @@ import (
 	"testing"
 	"time"
 
+	"github.com/go-mservice-bench/lib/logger"
 	"github.com/go-redis/redismock/v8"
 	"github.com/stretchr/testify/assert"
 )
 
 var name string = "myqueue"
 
-func Test_Queue(t *testing.T) {
+func TestQueue(t *testing.T) {
 	client, mock := redismock.NewClientMock()
 	mock.MatchExpectationsInOrder(true)
 
@@ -43,7 +44,7 @@ func Test_Queue(t *testing.T) {
 	}
 }
 
-func Test_Worker(t *testing.T) {
+func TestWorker(t *testing.T) {
 	delayMs := 3
 	client, mock := redismock.NewClientMock()
 	mock.MatchExpectationsInOrder(true)
@@ -54,7 +55,7 @@ func Test_Worker(t *testing.T) {
 		return nil
 	}
 
-	w := NewWorker(NewQueue(name, client), delayMs, client, action)
+	w := NewWorker(NewQueue(name, client), delayMs, logger.Logger{}, action)
 
 	mock.ExpectLPop(name).SetVal("foo1")
 	mock.ExpectLPop(name).SetVal("foo2")

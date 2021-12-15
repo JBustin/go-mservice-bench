@@ -2,26 +2,16 @@ package main
 
 import (
 	"github.com/go-mservice-bench/lib/broker"
-	"github.com/go-mservice-bench/lib/db"
 	"github.com/go-mservice-bench/lib/handlers"
+	"github.com/go-mservice-bench/lib/injectors"
 )
 
-func worker(d *db.DB, q *broker.Queue) {
+func worker(d *injectors.DI) {
 	w := broker.NewWorker(
-		*q,
+		*d.Queue,
 		d.Config.RedisWorkerDelayMs,
-		q.Client,
-		jobInjector(d, q, handlers.TransactionJob),
+		*d.Logger,
+		injectors.JobHandler(d, handlers.TransactionJob),
 	)
 	w.Start()
-}
-
-func jobInjector(
-	d *db.DB,
-	q *broker.Queue,
-	fn func(*db.DB, *broker.Queue, string) error,
-) func(string) error {
-	return func(data string) error {
-		return fn(d, q, data)
-	}
 }

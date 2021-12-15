@@ -10,6 +10,8 @@ import (
 	"github.com/go-mservice-bench/lib/db"
 	"github.com/go-mservice-bench/lib/env"
 	"github.com/go-mservice-bench/lib/fs"
+	"github.com/go-mservice-bench/lib/injectors"
+	"github.com/go-mservice-bench/lib/logger"
 	"github.com/go-mservice-bench/lib/redis"
 )
 
@@ -23,23 +25,26 @@ func main() {
 	env, err := env.New(fs)
 	handlerErr(err)
 
-	config, err := config.New(env)
+	c, err := config.New(env)
 	handlerErr(err)
-	fmt.Println(config)
+	fmt.Println(c)
 
-	redisClient := redis.New(config)
+	l := logger.NewLog(c.LogLevel)
+	redisClient := redis.New(c)
 
-	d, err := db.Init(&config)
+	d, err := db.Init(&c)
 	handlerErr(err)
-	// defer d.Stop()
+	defer d.Client.Close()
 
-	q := broker.NewQueue(config.RedisTransactionQueueName, redisClient)
+	q := broker.NewQueue(c.RedisTransactionQueueName, redisClient)
+	di := injectors.NewDi(d, &c, &l, &q)
 
 	switch *action {
 	case "server":
-		server(d, &q)
+		router := server(&di)
+		router.Run()
 	case "worker":
-		worker(d, &q)
+		worker(&di)
 	default:
 		fmt.Printf("Unexpected action [server, worker] %v\n", *action)
 	}

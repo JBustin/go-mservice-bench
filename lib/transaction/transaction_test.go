@@ -7,10 +7,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_Transaction(t *testing.T) {
+func TestTransaction(t *testing.T) {
 	transaction := NewTransaction(123, 234, 210.45)
 
-	assert.Equal(t, 123, transaction.From, "should format the inputs")
+	assert.Equal(t, uint(123), transaction.From, "should format the inputs")
 	assert.Equal(t, "123:234:210.45", transaction.String(), "should stringified a transaction")
 
 	newTransaction, err := FromString(transaction.String())
@@ -24,5 +24,5 @@ func Test_Transaction(t *testing.T) {
 
 	_, err = FromString("a:b:c")
 
-	assert.Equal(t, "strconv.ParseFloat: parsing \"c\": invalid syntax", fmt.Sprintf("%v", err), "should raise a conversion error")
+	assert.Equal(t, "strconv.Atoi: parsing \"a\": invalid syntax", fmt.Sprintf("%v", err), "should raise a conversion error")
 }

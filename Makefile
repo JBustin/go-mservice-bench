@@ -31,3 +31,6 @@ get-all: ## get [DATA]
 get: ## get [DATA] [ID]
 	@curl -X GET http://127.0.0.1:8080/${DATA}/${ID}
 
+bench: ## bench [PACKAGE] / [TEST]
+	go test -benchmem -run=^$$ -bench ^${TEST}$$  github.com/go-mservice-bench/lib/${PACKAGE}
+

@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_Config(t *testing.T) {
+func TestConfig(t *testing.T) {
 	e := env.Env{
 		Data: map[string]string{},
 	}

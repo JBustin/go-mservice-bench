@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_Env(t *testing.T) {
+func TestEnv(t *testing.T) {
 	fs := mocks.NewFs()
 
 	e, err := New(fs)
@@ -36,7 +36,7 @@ func Test_Env(t *testing.T) {
 	assert.Equal(t, false, exists, "should not get an unexisting integer variable")
 }
 
-func Test_Walker(t *testing.T) {
+func TestWalker(t *testing.T) {
 	e := Env{
 		Data: map[string]string{
 			"VAR_FOO": "foo",

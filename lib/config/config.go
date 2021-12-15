@@ -16,6 +16,7 @@ const (
 	defaultRedisBatchJob             = 25
 	defaultRedisTransactionQueueName = "transaction"
 	defaultRedisWorkerDelayMs        = 10
+	defaultLogLevel                  = "error"
 )
 
 type Config struct {
@@ -30,6 +31,7 @@ type Config struct {
 	RedisBatchJob             int
 	RedisTransactionQueueName string
 	RedisWorkerDelayMs        int
+	LogLevel                  string
 }
 
 func New(e env.Env) (Config, error) {
@@ -65,9 +67,13 @@ func New(e env.Env) (Config, error) {
 	if !exists {
 		redisBatchJob = defaultRedisBatchJob
 	}
-	RedisWorkerDelayMs, exists := e.GetInt("REDIS_WORKER_DELAY_MS")
+	redisWorkerDelayMs, exists := e.GetInt("REDIS_WORKER_DELAY_MS")
 	if !exists {
-		RedisWorkerDelayMs = defaultRedisWorkerDelayMs
+		redisWorkerDelayMs = defaultRedisWorkerDelayMs
+	}
+	logLevel, exists := e.Get("LOG_LEVEL")
+	if !exists {
+		logLevel = defaultLogLevel
 	}
 
 	return Config{
@@ -81,6 +87,7 @@ func New(e env.Env) (Config, error) {
 		RedisPingMs:               redisPingMs,
 		RedisBatchJob:             redisBatchJob,
 		RedisTransactionQueueName: defaultRedisTransactionQueueName,
-		RedisWorkerDelayMs:        RedisWorkerDelayMs,
+		RedisWorkerDelayMs:        redisWorkerDelayMs,
+		LogLevel:                  logLevel,
 	}, nil
 }
