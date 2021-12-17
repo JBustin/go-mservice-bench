@@ -16,11 +16,11 @@ func Test_Ping(t *testing.T) {
 		Db:    &db.DB{},
 		Queue: &broker.Queue{},
 	}
-	router := server(&d)
+	server := router(&d)
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/ping", nil)
-	router.ServeHTTP(w, req)
+	server.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)
 	assert.Equal(t, "{\"message\":\"pong\"}", w.Body.String())

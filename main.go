@@ -41,8 +41,8 @@ func main() {
 
 	switch *action {
 	case "server":
-		router := server(&di)
-		router.Run()
+		server := router(&di)
+		server.Run()
 	case "worker":
 		worker(&di)
 	default:

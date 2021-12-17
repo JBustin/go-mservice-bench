@@ -6,7 +6,7 @@ import (
 	"github.com/go-mservice-bench/lib/injectors"
 )
 
-func server(d *injectors.DI) *gin.Engine {
+func router(d *injectors.DI) *gin.Engine {
 	r := gin.Default()
 	r.GET("/ping", handlers.Ping)
 	r.GET("/account", injectors.GinHandler(d, handlers.GetAllAccount))
