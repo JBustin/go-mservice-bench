@@ -1,46 +1,33 @@
 # go-mservice-bench
 
-golang API + Redis + golang Workers + Postgresql (or redis)
+golang API (Gin) + Redis (go-redis) + golang Workers + Sqlite (Gorm)
 
-# Bench
+## Skills
 
-Client:
+- Test Gin
+- Test Gorm + Sqlite
+- Message broker based on Redis
+- Dotenv config
+- DI pattern
+- Unit tests
+- Real load tests
 
-- id
-- firstName
-- lastName
+## How to use it
 
-Account:
-
-- uid
-- client uid
-- amount
-
-Transaction:
-
-- to account uid
-- from account uid
-- amount
-- type (credit, debit)
-
-Handle large volume of transactions.
-
-API:
-
-- post new transation
-- get account amount by account uid
-- get client total transactions + total debits + total credits + total amount by client uid
-- get all client total transactions + total amount
-
-# Architecture
-
-- Server API restful (Gin)
-- Message Broker (Redis)
-- Worker(s)
-  - validate transactions
-  - create transactions in db
-  - update accounts amounts in db
-- Postgresql
-  - table clients (#id, firstName, lastName)
-  - table accounts (#id, clientId, amount)
-  - table transactions (#id, toId, fromId, type, amount)
+```sh
+# clone the project
+# go to root directory
+mkdir .data tmp
+go build -o tmp/goms
+make start-redis
+# stop with Ctrl+C
+./tmp/goms -x server
+# stop with Ctrl+C
+./tmp/goms -x worker
+DATA=account make post
+DATA=account make post
+ID=1 DATA=account make patch
+# stop with Ctrl+C
+COUNT=100 CONCURRENT=100 make attack
+make stop-redis
+```

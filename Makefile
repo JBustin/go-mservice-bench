@@ -20,10 +20,10 @@ stop-redis: ## stop dev env
 	@docker-compose -f .docker/docker-compose.yml down
 
 post: ## post [DATA].json file
-	@curl -X POST -H "Content-Type: application/json" -d @./tmp/post/${DATA}.json http://127.0.0.1:8080/${DATA}
+	@curl -X POST -H "Content-Type: application/json" -d @./samples/post/${DATA}.json http://127.0.0.1:8080/${DATA}
 
 patch: ## patch [ID] with [DATA].json file
-	@curl -X PATCH -H "Content-Type: application/json" -d @./tmp/patch/${DATA}.json http://127.0.0.1:8080/${DATA}/${ID}
+	@curl -X PATCH -H "Content-Type: application/json" -d @./samples/patch/${DATA}.json http://127.0.0.1:8080/${DATA}/${ID}
 
 get-all: ## get [DATA]
 	@curl -X GET http://127.0.0.1:8080/${DATA}
@@ -31,6 +31,16 @@ get-all: ## get [DATA]
 get: ## get [DATA] [ID]
 	@curl -X GET http://127.0.0.1:8080/${DATA}/${ID}
 
+delete: ## delete [ID]
+	@curl -X DELETE http://127.0.0.1:8080/${DATA}/${ID}
+
 bench: ## bench [PACKAGE] / [TEST]
 	go test -benchmem -run=^$$ -bench ^${TEST}$$  github.com/go-mservice-bench/lib/${PACKAGE}
+
+attack: ## start [COUNT] * [CONCURRENT] transactions
+	@for run in {1..${COUNT}}; do \
+		for run in {1..${CONCURRENT}}; do \
+			DATA=transaction make post & \
+		done \
+	done
 
